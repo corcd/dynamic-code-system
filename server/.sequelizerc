@@ -1,0 +1,18 @@
+/*
+ * @Author: Whzcorcd
+ * @Date: 2020-07-09 11:52:36
+ * @LastEditors: Wzhcorcd
+ * @LastEditTime: 2020-07-09 12:40:10
+ * @Description: file content
+ */
+
+'use strict'
+
+const path = require('path')
+
+module.exports = {
+  config: path.join(__dirname, 'database/config.json'),
+  'migrations-path': path.join(__dirname, 'database/migrations'),
+  'seeders-path': path.join(__dirname, 'database/seeders'),
+  'models-path': path.join(__dirname, 'app/model'),
+}
