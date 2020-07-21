@@ -1,4 +1,4 @@
-# dynamic-code-server
+# dynamic-code-system
 
 **基于 Egg.js 的 RESTful 风格动态代码下发系统**
 
@@ -15,8 +15,8 @@
 
 #### 区分
 
-server 目录为服务端目录
-client 目录为客户端目录
+- server 目录为服务端目录
+- client 目录为客户端目录
 
 #### 测试环境服务启动
 
