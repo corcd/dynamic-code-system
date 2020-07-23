@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-07-17 09:47:09
  * @LastEditors: Wzhcorcd
- * @LastEditTime: 2020-07-21 19:23:04
+ * @LastEditTime: 2020-07-23 16:57:27
  * @Description: file content
 -->
 <template>
@@ -40,7 +40,9 @@
               <a-list-item :key="item.appid" v-for="item in applications">
                 <a-list-item-meta>
                   <div slot="title">
-                    <a href="#"> {{ item.project }} </a>&nbsp; &nbsp;
+                    <a @click="handleItemClick(item.appid)">
+                      {{ item.project }} </a
+                    >&nbsp; &nbsp;
                     <span>( {{ item.appid }} )</span>
                   </div>
                   <!-- <div slot="description">{{ item.time }}</div> -->
@@ -100,23 +102,7 @@ export default {
             lineDash: null
           }
         }
-      },
-      scale: [
-        {
-          dataKey: 'score',
-          min: 0,
-          max: 80
-        }
-      ],
-      axisData: [
-        { item: '引用', a: 70, b: 30, c: 40 },
-        { item: '口碑', a: 60, b: 70, c: 40 },
-        { item: '产量', a: 50, b: 60, c: 40 },
-        { item: '贡献', a: 40, b: 50, c: 40 },
-        { item: '热度', a: 60, b: 70, c: 40 },
-        { item: '引用', a: 70, b: 50, c: 40 }
-      ],
-      radarData: []
+      }
     }
   },
   computed: {
@@ -158,6 +144,9 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    handleItemClick(appid) {
+      this.$router.push({ path: `/dashboard/configuration/${appid}` })
     }
   }
 }

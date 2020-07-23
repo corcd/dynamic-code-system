@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-07-17 15:14:53
  * @LastEditors: Wzhcorcd
- * @LastEditTime: 2020-07-21 11:33:22
+ * @LastEditTime: 2020-07-23 14:43:37
  * @Description: file content
  */
 import {
@@ -35,7 +35,11 @@ const constantRouterComponents = {
 
   // 概览
   Workspace: () =>
-    import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/Workspace')
+    import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/Workspace'),
+  Configuration: () =>
+    import(
+      /* webpackChunkName: "dashboard" */ '@/views/dashboard/configuration'
+    )
 
   // // 应用管理
   // Application: () =>
@@ -63,7 +67,7 @@ const routes = [
         redirect: '/dashboard/workplace',
         component: constantRouterComponents.RouteView,
         meta: {
-          title: '仪表盘',
+          title: '动态代码',
           keepAlive: true,
           icon: bxAnaalyse
         },
@@ -82,6 +86,15 @@ const routes = [
               title: '工作区',
               keepAlive: true
             }
+          },
+          {
+            path: '/dashboard/configuration/:appid',
+            name: 'configuration',
+            component: constantRouterComponents.Configuration,
+            meta: {
+              title: '应用配置'
+            },
+            hidden: true
           }
         ]
       },

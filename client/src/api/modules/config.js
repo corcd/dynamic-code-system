@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-07-16 17:07:44
  * @LastEditors: Wzhcorcd
- * @LastEditTime: 2020-07-17 13:20:11
+ * @LastEditTime: 2020-07-23 19:24:07
  * @Description: file content
  */
 import base from '@/api/base'
@@ -15,14 +15,17 @@ const Config = {
   config_create(data) {
     return Request.post(`${base.gateWay}/v1/config`, JSON.stringify(data))
   },
-  config_read(data) {
-    return Request.get(`${base.gateWay}/v1/config/${data}`)
+  config_read(appid) {
+    return Request.get(`${base.gateWay}/v1/config/${appid}`)
   },
-  config_update(data) {
-    return Request.patch(`${base.gateWay}/v1/config`, JSON.stringify(data))
+  config_update(appid, data) {
+    return Request.patch(
+      `${base.gateWay}/v1/config/${appid}`,
+      JSON.stringify(data)
+    )
   },
-  config_delete(data) {
-    return Request.delete(`${base.gateWay}/v1/config/${data}`)
+  config_delete(appid) {
+    return Request.delete(`${base.gateWay}/v1/config/${appid}`)
   }
 }
 

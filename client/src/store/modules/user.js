@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-07-15 18:25:19
  * @LastEditors: Wzhcorcd
- * @LastEditTime: 2020-07-21 19:24:25
+ * @LastEditTime: 2020-07-23 15:08:07
  * @Description: file content
  */
 import storage from 'store'
@@ -43,6 +43,7 @@ const user = {
           return Promise.reject(response.data.msg)
         }
       } catch (error) {
+        console.log(error)
         return Promise.reject(error)
       }
     },
@@ -60,6 +61,7 @@ const user = {
           return Promise.reject(response.data.msg)
         }
       } catch (error) {
+        console.log(error)
         return Promise.reject(error)
       }
     },
@@ -77,6 +79,7 @@ const user = {
           return Promise.reject(response.data.msg)
         }
       } catch (error) {
+        console.log(error)
         return Promise.reject(error)
       }
     }
