@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-07-14 10:32:38
  * @LastEditors: Wzhcorcd
- * @LastEditTime: 2020-07-14 16:20:35
+ * @LastEditTime: 2020-07-24 12:54:08
  * @Description: file content
  */
 
@@ -16,6 +16,7 @@ module.exports = params => {
   }
   const options = Object.assign({}, defaultParams, params)
   const sourceArray = [
+    '(function(){',
     'var newSourceScript = document.createElement("script");',
     `newSourceScript.src = "${options.url}";`,
     `newSourceScript.async = ${options.async};`,
@@ -34,12 +35,15 @@ module.exports = params => {
     `newSourceScript.onload = function() {${options.onload}};`,
   ]
 
+  const tail = '}());'
+
   // 存在加载函数时
   if (options.onload) {
     const str_1 = sourceArray.reduce((acc, value) => acc + value)
     const str_2 = onloadArray.reduce((acc, value) => acc + value)
-    return str_1.concat(str_2)
+    return str_1.concat(str_2, tail)
   }
 
-  return sourceArray.reduce((acc, value) => acc + value)
+  const res = sourceArray.reduce((acc, value) => acc + value)
+  return res.concat(tail)
 }
