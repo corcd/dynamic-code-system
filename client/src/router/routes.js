@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-07-17 15:14:53
  * @LastEditors: Wzhcorcd
- * @LastEditTime: 2020-07-23 14:43:37
+ * @LastEditTime: 2020-07-24 14:00:54
  * @Description: file content
  */
 import {
@@ -38,7 +38,7 @@ const constantRouterComponents = {
     import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/Workspace'),
   Configuration: () =>
     import(
-      /* webpackChunkName: "dashboard" */ '@/views/dashboard/configuration'
+      /* webpackChunkName: "dashboard" */ '@/views/dashboard/Configuration'
     )
 
   // // 应用管理

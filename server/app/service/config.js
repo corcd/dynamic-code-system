@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-07-09 13:43:58
  * @LastEditors: Wzhcorcd
- * @LastEditTime: 2020-07-15 09:41:35
+ * @LastEditTime: 2020-07-24 16:06:42
  * @Description: file content
  */
 
@@ -42,7 +42,7 @@ class ConfigService extends Service {
     const resConfig = await ctx.model.Config.create({
       appid,
       project,
-      schema: '',
+      schema: '[]',
     })
 
     // 同步创建新的动态代码仓库
@@ -122,9 +122,13 @@ class ConfigService extends Service {
 
     if (!appid) return null
 
+    if (reset) {
+      return await ctx.service.source.write(appid, '')
+    }
+
     const code = await ctx.service.code.build(schema)
 
-    const res = await ctx.service.source.write(appid, reset ? '' : code)
+    const res = await ctx.service.source.write(appid, code)
 
     return res
   }

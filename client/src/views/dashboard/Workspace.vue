@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-07-17 09:47:09
  * @LastEditors: Wzhcorcd
- * @LastEditTime: 2020-07-23 16:57:27
+ * @LastEditTime: 2020-07-24 15:56:55
  * @Description: file content
 -->
 <template>
@@ -27,7 +27,7 @@
           <a-statistic title="项目数" :value="count" />
         </div>
         <div class="stat-item">
-          <a-statistic title="项目访问" :value="2223" />
+          <a-statistic title="项目访问" :value="2233" />
         </div>
       </div>
     </template>
@@ -36,24 +36,97 @@
       <a-row :gutter="24">
         <a-col :xl="24" :lg="24" :md="24" :sm="24" :xs="24">
           <a-card :loading="loading" title="已配置应用" :bordered="false">
+            <a-button slot="extra" type="primary" @click="showDrawer">
+              <a-icon type="plus" /> 新增应用
+            </a-button>
             <a-list>
               <a-list-item :key="item.appid" v-for="item in applications">
                 <a-list-item-meta>
                   <div slot="title">
                     <a @click="handleItemClick(item.appid)">
-                      {{ item.project }} </a
-                    >&nbsp; &nbsp;
-                    <span>( {{ item.appid }} )</span>
+                      {{ item.project }}
+                    </a>
                   </div>
-                  <!-- <div slot="description">{{ item.time }}</div> -->
+                  <div slot="description">{{ item.appid }}</div>
                 </a-list-item-meta>
+                <div>
+                  <a-popconfirm
+                    title="删除前请确认未应用于生产环境"
+                    ok-text="是"
+                    cancel-text="否"
+                    style="color: red"
+                    @confirm="deleteApplication(item.appid)"
+                  >
+                    <a-icon
+                      slot="icon"
+                      type="question-circle-o"
+                      style="color: red"
+                    />
+                    <a href="#">删除应用</a>
+                  </a-popconfirm>
+                </div>
               </a-list-item>
             </a-list>
+            <a-row>
+              <a-col :span="8"> </a-col>
+              <a-col :span="8">
+                <a-pagination
+                  simple
+                  :defaultCurrent="page"
+                  :defaultPageSize="pageSize"
+                  :total="count"
+                  style="width: 100%; text-align: center;"
+                  @change="handlePaginationChange($event)"
+                />
+              </a-col>
+              <a-col :span="8"> </a-col>
+            </a-row>
           </a-card>
         </a-col>
       </a-row>
     </div>
-  </page-header-wrapper>
+
+    <a-drawer
+      title="创建新的应用"
+      :width="360"
+      :visible="visible"
+      :body-style="{ paddingBottom: '80px' }"
+      @close="onClose"
+    >
+      <a-form layout="vertical" hide-required-mark>
+        <a-row :gutter="24">
+          <a-form-item label="应用名称">
+            <a-input v-model="addDate.project" placeholder="请输入应用名称" />
+          </a-form-item>
+        </a-row>
+        <a-row :gutter="24">
+          <a-form-item label="应用描述">
+            <a-textarea :rows="4" placeholder="请输入应用描述" />
+          </a-form-item>
+        </a-row>
+      </a-form>
+      <div
+        :style="{
+          position: 'absolute',
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e9e9e9',
+          padding: '10px 16px',
+          background: '#fff',
+          textAlign: 'right',
+          zIndex: 1
+        }"
+      >
+        <a-button :style="{ marginRight: '8px' }" @click="onClose">
+          取消
+        </a-button>
+        <a-button type="primary" @click="addNewAppcation">
+          提交
+        </a-button>
+      </div>
+    </a-drawer></page-header-wrapper
+  >
 </template>
 
 <script>
@@ -73,12 +146,19 @@ export default {
       avatar: '',
       user: {},
 
-      projects: [],
+      visible: false,
       loading: true,
       radarLoading: true,
+      page: 1,
+      pageSize: 6,
+
+      projects: [],
       count: 0,
       applications: [],
       teams: [],
+      addDate: {
+        project: ''
+      },
 
       // data
       axis1Opts: {
@@ -118,20 +198,15 @@ export default {
       }
     }
   },
-  created() {},
   mounted() {
     this.getApplications()
-    // this.getProjects()
-    // this.getActivity()
-    // this.getTeams()
-    // this.initRadar()
   },
   methods: {
     async getApplications() {
       try {
         const params = {
-          page: 1,
-          pageSize: 10
+          page: this.page,
+          pageSize: this.pageSize
         }
         const response = await API.Config.config_list(params)
         const { status } = response.data
@@ -143,6 +218,52 @@ export default {
         }
       } catch (err) {
         console.log(err)
+      }
+    },
+    async addNewAppcation() {
+      try {
+        const params = Object.assign(
+          {},
+          {
+            project: ''
+          },
+          this.addDate
+        )
+        const response = await API.Config.config_create(params)
+        const { status } = response.data
+        if (Number(status) === 200) {
+          this.getApplications()
+          this.onClose()
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async deleteApplication(appid) {
+      try {
+        const response = await API.Config.config_delete(appid)
+        const { status } = response.data
+        if (Number(status) === 200) {
+          this.getApplications()
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    handlePaginationChange(e) {
+      console.log(e)
+      if (e) {
+        this.page = Number(e)
+        this.getApplications()
+      }
+    },
+    showDrawer() {
+      this.visible = true
+    },
+    onClose() {
+      this.visible = false
+      for (let key in this.addDate) {
+        this.addDate[key] = ''
       }
     },
     handleItemClick(appid) {

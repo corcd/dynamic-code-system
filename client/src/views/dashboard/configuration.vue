@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-07-23 11:45:04
  * @LastEditors: Wzhcorcd
- * @LastEditTime: 2020-07-24 12:28:03
+ * @LastEditTime: 2020-07-24 17:15:07
  * @Description: file content
 -->
 <template>
@@ -10,7 +10,11 @@
     <a-row :gutter="24">
       <a-col :xl="24" :lg="24" :md="24" :sm="24" :xs="24">
         <a-card :loading="loading" title="应用配置" :bordered="false">
-          <a-button slot="extra" type="primary" @click="handleSubmit">
+          <a-button
+            slot="extra"
+            type="primary"
+            @click="updateApplicationConfig"
+          >
             发布配置
           </a-button>
           <a-form-model ref="form" :model="appConfig" v-bind="formItemLayout">
@@ -83,7 +87,8 @@ export default {
     const schemaItem = new Map([
       ['logger', { level: '', msg: '' }],
       ['script', { url: '', async: '', onload: '' }],
-      ['listener', { target: '', listener: '', content: '' }]
+      ['listener', { target: '', listener: '', content: '' }],
+      ['message', { subkey: '', topic: '', actions: '' }]
     ])
     return {
       options: [
@@ -101,6 +106,11 @@ export default {
           name: '全局侦听器',
           value: 'listener',
           params: ['target', 'listener', 'content']
+        },
+        {
+          name: 'DMS 消息通知',
+          value: 'message',
+          params: ['subkey', 'topic', 'actions']
         }
       ],
       schemaItem: schemaItem,
@@ -137,12 +147,36 @@ export default {
           this.loading = false
           const { data } = response.data
           this.appConfig = Object.assign({}, data, {
-            schema: JSON.parse(data.schema)
+            schema: data.schema ? JSON.parse(data.schema) : ''
           })
           console.log(this.appConfig.schema)
         }
       } catch (err) {
         console.log(err)
+      }
+    },
+    async updateApplicationConfig() {
+      try {
+        const params = {
+          project: this.appConfig.project,
+          schema: JSON.stringify(this.appConfig.schema)
+        }
+        const response = await API.Config.config_update(this.appid, params)
+        const { status, msg } = response.data
+        if (Number(status) === 200) {
+          this.loading = true
+          this.openNotificationWithIcon('success', '发布成功', msg)
+          this.getApplicationConfig()
+        } else {
+          this.openNotificationWithIcon(
+            'error',
+            '发布失败',
+            `(${status}) ${msg}`
+          )
+        }
+      } catch (err) {
+        console.log(err)
+        this.openNotificationWithIcon('error', '发布失败', err)
       }
     },
     removeDomain() {
@@ -156,6 +190,12 @@ export default {
       })
       console.log(this.appConfig.schema)
     },
+    openNotificationWithIcon(type, title, desc) {
+      this.$notification[type]({
+        message: title || 'Notification Title',
+        description: desc || ''
+      })
+    },
     handleSelectChange(e, index) {
       this.$set(this.appConfig.schema, index, {
         type: e,
@@ -166,22 +206,6 @@ export default {
     handleInputChange(e, index, key) {
       this.$set(this.appConfig.schema[index].params, key, e.target.value)
       console.log(this.appConfig.schema[index].params[key])
-    },
-    async handleSubmit() {
-      try {
-        const params = {
-          project: this.appConfig.project,
-          schema: JSON.stringify(this.appConfig.schema)
-        }
-        const response = await API.Config.config_update(this.appid, params)
-        const { status } = response.data
-        if (Number(status) === 200) {
-          this.loading = true
-          this.getApplicationConfig()
-        }
-      } catch (err) {
-        console.log(err)
-      }
     }
   }
 }
